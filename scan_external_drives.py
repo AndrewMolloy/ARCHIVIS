@@ -155,15 +155,20 @@ class DriveScanner:
 
             external_drives = []
 
-            # Check each disk and its partitions
+            # Check each disk and its partitions/volumes
             for disk_id in disk_list.get('AllDisksAndPartitions', []):
-                # Check each partition on this disk
-                for partition in disk_id.get('Partitions', []):
-                    device = partition.get('DeviceIdentifier')
+                # Collect all volumes to check (both Partitions and APFSVolumes)
+                volumes_to_check = []
+                volumes_to_check.extend(disk_id.get('Partitions', []))
+                volumes_to_check.extend(disk_id.get('APFSVolumes', []))
+
+                # Check each volume
+                for volume in volumes_to_check:
+                    device = volume.get('DeviceIdentifier')
                     if not device:
                         continue
 
-                    # Get detailed info for this partition
+                    # Get detailed info for this volume
                     info_result = subprocess.run(
                         ['diskutil', 'info', '-plist', device],
                         capture_output=True,
@@ -176,7 +181,15 @@ class DriveScanner:
                     is_mounted = info.get('MountPoint', '') != ''
                     volume_name = info.get('VolumeName', '')
 
-                    if is_external and is_mounted and volume_name:
+                    # Exclude disk images and virtual volumes
+                    is_disk_image = info.get('DiskImageAlias') is not None
+                    mount_point = info.get('MountPoint', '')
+                    is_simulator = '/CoreSimulator/' in mount_point
+                    is_ram_disk = info.get('RAMDisk', False)
+
+                    # Only include real physical external drives
+                    if (is_external and is_mounted and volume_name and
+                        not is_disk_image and not is_simulator and not is_ram_disk):
                         drive_info = {
                             'device_identifier': device,
                             'volume_uuid': info.get('VolumeUUID', ''),
