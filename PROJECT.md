@@ -132,6 +132,43 @@
 3. Refine based on real-world usage
 4. Begin Phase 1.5 prototype
 
+### 2025-12-04: Phase 1 Testing & First Production Scan
+
+**Session 2**: Real-world testing with external drive
+
+**Completed**:
+1. Fixed critical bug: Scanner was checking disks instead of partitions
+2. Successfully scanned first external drive (ASGARD - 5TB)
+3. Validated snapshot data capture (sizes, file counts, depth 0-2)
+4. Renamed drive volume from "Silver" to "Asgard" (safe, no data loss)
+5. Confirmed registry persistence and UUID tracking
+6. Pushed bug fix to GitHub
+
+**ASGARD Drive Analysis**:
+- 5.0 TB capacity (4.55 TB formatted)
+- 2.04 TB used, 2.7 TB free
+- 105,832 files catalogued
+- 32 directories mapped at depth 0-2
+- Largest folders: Backblaze (698GB), Google (503GB), BTG (331GB)
+- exFAT filesystem, gracefully handled permission errors
+
+**User Decisions**:
+- Depth 2-3 is sufficient for strategic planning
+- Prioritize interactive HTML treemap for visualization (Phase 2)
+- Continue mapping remaining external drives before Phase 1.5/2
+
+**Key Insights**:
+- Snapshot data already captures everything needed (sizes + file counts)
+- Current depth shows clear organizational structure
+- Ready for multi-drive scanning workflow
+- HTML treemap will enable strategic data organization planning
+
+**Next Steps**:
+1. Continue scanning additional external drives
+2. Build HTML treemap visualization (Phase 2 priority)
+3. Analyze patterns across multiple drives
+4. Begin Phase 1.5 design (internal drives + cloud)
+
 ---
 
 ## Technical Decisions
@@ -197,24 +234,32 @@
 
 ## Testing Checklist
 
-### Phase 1 Testing (To Do)
+### Phase 1 Testing
 
 - [ ] Test with empty external drive
 - [ ] Test with full external drive (>90% capacity)
 - [ ] Test with multiple drives simultaneously
 - [ ] Test with HFS+ formatted drive
 - [ ] Test with APFS formatted drive
-- [ ] Test with exFAT formatted drive
+- [x] Test with exFAT formatted drive (ASGARD - 5TB, 2025-12-04)
 - [ ] Test name collision (same name proposed twice)
 - [ ] Test manual name override
-- [ ] Test rescanning same drive (UUID match)
-- [ ] Test drive with permission-restricted folders
+- [x] Test rescanning same drive (UUID match)
+- [x] Test drive with permission-restricted folders (ASGARD - handled gracefully)
 - [ ] Test with very deep directory structure
 - [ ] Test with drive that fills during scan
 - [ ] Test unplugging drive during scan (error handling)
-- [ ] Verify snapshot accuracy
-- [ ] Verify registry persistence
-- [ ] Verify timestamp formats
+- [x] Verify snapshot accuracy (ASGARD snapshot validated)
+- [x] Verify registry persistence (ASGARD registered successfully)
+- [x] Verify timestamp formats (ISO8601 confirmed)
+
+**First Production Test**: ASGARD (2025-12-04)
+- 5TB external drive, exFAT format
+- Auto-assigned name "Asgard" (large category)
+- Volume renamed successfully
+- 32 directories scanned at depth 0-2
+- 2.04TB data, 105,832 files catalogued
+- Fixed partition detection bug during testing
 
 ---
 
@@ -271,10 +316,17 @@
 
 ### Phase 2 Priority Features
 
-1. Data categorization (foundation for everything else)
-2. Duplicate detection (high value, easy to understand)
-3. Storage capacity planner (core value proposition)
-4. Human-readable reports (for non-technical users)
+1. **Interactive HTML Treemap** (user requested - top priority)
+   - Visual directory size exploration
+   - Click to zoom into folders
+   - Color-coded by size/category
+   - Hover for details (size, file count)
+   - Strategic planning tool for data organization
+
+2. Data categorization (foundation for everything else)
+3. Duplicate detection (high value, easy to understand)
+4. Storage capacity planner (core value proposition)
+5. Human-readable reports (for non-technical users)
 
 ---
 
