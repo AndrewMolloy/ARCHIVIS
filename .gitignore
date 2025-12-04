@@ -1,0 +1,66 @@
+# ARCHIVIS .gitignore
+
+# Storage data (contains personal paths and drive info)
+StorageMap/snapshots/*.json
+StorageMap/registry/drives.json
+StorageMap/notes/*
+
+# Keep directory structure but ignore user data
+!StorageMap/snapshots/.gitkeep
+!StorageMap/registry/.gitkeep
+!StorageMap/notes/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Credentials (for Phase 1.5)
+.archivis/
+*.token
+*_credentials.json
+google_creds.json
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
