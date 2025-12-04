@@ -155,36 +155,38 @@ class DriveScanner:
 
             external_drives = []
 
-            # Check each disk
+            # Check each disk and its partitions
             for disk_id in disk_list.get('AllDisksAndPartitions', []):
-                device = disk_id.get('DeviceIdentifier')
-                if not device:
-                    continue
+                # Check each partition on this disk
+                for partition in disk_id.get('Partitions', []):
+                    device = partition.get('DeviceIdentifier')
+                    if not device:
+                        continue
 
-                # Get detailed info for this disk
-                info_result = subprocess.run(
-                    ['diskutil', 'info', '-plist', device],
-                    capture_output=True,
-                    check=True
-                )
-                info = plistlib.loads(info_result.stdout)
+                    # Get detailed info for this partition
+                    info_result = subprocess.run(
+                        ['diskutil', 'info', '-plist', device],
+                        capture_output=True,
+                        check=True
+                    )
+                    info = plistlib.loads(info_result.stdout)
 
-                # Check if this is an external, mounted volume
-                is_external = info.get('Internal', True) == False
-                is_mounted = info.get('MountPoint', '') != ''
-                volume_name = info.get('VolumeName', '')
+                    # Check if this is an external, mounted volume
+                    is_external = info.get('Internal', True) == False
+                    is_mounted = info.get('MountPoint', '') != ''
+                    volume_name = info.get('VolumeName', '')
 
-                if is_external and is_mounted and volume_name:
-                    drive_info = {
-                        'device_identifier': device,
-                        'volume_uuid': info.get('VolumeUUID', ''),
-                        'volume_name': volume_name,
-                        'mount_point': info.get('MountPoint', ''),
-                        'capacity_bytes': info.get('TotalSize', 0),
-                        'free_bytes': info.get('FreeSpace', 0),
-                        'file_system': info.get('FilesystemType', 'unknown')
-                    }
-                    external_drives.append(drive_info)
+                    if is_external and is_mounted and volume_name:
+                        drive_info = {
+                            'device_identifier': device,
+                            'volume_uuid': info.get('VolumeUUID', ''),
+                            'volume_name': volume_name,
+                            'mount_point': info.get('MountPoint', ''),
+                            'capacity_bytes': info.get('TotalSize', 0),
+                            'free_bytes': info.get('FreeSpace', 0),
+                            'file_system': info.get('FilesystemType', 'unknown')
+                        }
+                        external_drives.append(drive_info)
 
             return external_drives
 
