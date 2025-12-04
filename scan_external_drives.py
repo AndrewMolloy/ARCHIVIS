@@ -212,7 +212,10 @@ class DriveScanner:
 
     def find_drive_in_registry(self, drive_info: Dict) -> Optional[Dict]:
         """
-        Find a drive in the registry by UUID or device identifier.
+        Find a drive in the registry by UUID ONLY.
+
+        Device identifiers (disk6s2, etc.) are NOT used for matching because
+        they are transient and get reused when drives are plugged/unplugged.
 
         Args:
             drive_info: Drive information dictionary
@@ -221,13 +224,14 @@ class DriveScanner:
             Registry entry or None if not found
         """
         uuid = drive_info.get('volume_uuid')
-        device = drive_info.get('device_identifier')
+
+        # Only match by UUID - device identifiers are not persistent!
+        if not uuid:
+            return None
 
         for location in self.registry['locations']:
             if location['kind'] == 'external_drive':
-                if uuid and location.get('volume_uuid') == uuid:
-                    return location
-                if device and location.get('device_identifier') == device:
+                if location.get('volume_uuid') == uuid:
                     return location
 
         return None
